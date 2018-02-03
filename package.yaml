@@ -1,0 +1,31 @@
+name: key-state
+version: '0.0.0'
+category: Game
+synopsis: Manage key and button states and statuses
+description: Manage key and button states and statuses
+maintainer: Joe Vargas
+default-extensions:
+- NamedFieldPuns
+extra-source-files:
+- package.yaml
+- README.md
+- stack.yaml
+ghc-options: -Wall
+library:
+  dependencies:
+  - base >=4.7 && <5
+  source-dirs: library
+tests:
+ key-state-tests:
+    dependencies:
+    - base
+    - key-state
+    - hspec
+    ghc-options:
+    - -rtsopts
+    - -threaded
+    - -with-rtsopts=-N
+    main: Main.hs
+    source-dirs: tests
+github: jxv/key-state
+license: BSD3
