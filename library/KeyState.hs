@@ -1,4 +1,12 @@
-module KeyState where
+module KeyState
+  ( KeyStatus(..)
+  , KeyState(..)
+  , initKeyState
+  , pressedKeyState
+  , releasedKeyState
+  , updateKeyState
+  , maintainKeyState
+  ) where
 
 data KeyStatus
   = KeyStatus'Untouched
@@ -15,6 +23,12 @@ data KeyState count = KeyState
 initKeyState :: KeyState count
 initKeyState = KeyState KeyStatus'Untouched Nothing
 
+pressedKeyState :: KeyState count
+pressedKeyState = KeyState KeyStatus'Pressed Nothing
+
+releasedKeyState :: KeyState count
+releasedKeyState = KeyState KeyStatus'Released Nothing
+
 updateKeyState
   :: Num count
   => count -- ^ Counter delta
@@ -30,4 +44,15 @@ updateKeyState delta KeyState{ksStatus, ksCounter} False = case ksStatus of
   KeyStatus'Untouched -> KeyState KeyStatus'Untouched (Just $ delta + (case ksCounter of Nothing -> 0; Just counter -> counter))
   KeyStatus'Pressed -> KeyState KeyStatus'Released Nothing
   KeyStatus'Held -> KeyState KeyStatus'Released Nothing
+  KeyStatus'Released -> KeyState KeyStatus'Untouched Nothing
+
+maintainKeyState
+  :: Num count
+  => count -- ^ Counter delta
+  -> KeyState count
+  -> KeyState count
+maintainKeyState delta KeyState{ksStatus, ksCounter} = case ksStatus of
+  KeyStatus'Untouched -> KeyState KeyStatus'Untouched (Just $ delta + (case ksCounter of Nothing -> 0; Just counter -> counter))
+  KeyStatus'Pressed -> KeyState KeyStatus'Held Nothing
+  KeyStatus'Held -> KeyState KeyStatus'Held (Just $ delta + (case ksCounter of Nothing -> 0; Just counter -> counter))
   KeyStatus'Released -> KeyState KeyStatus'Untouched Nothing
