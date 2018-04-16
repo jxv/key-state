@@ -6,6 +6,11 @@ module KeyState
   , releasedKeyState
   , updateKeyState
   , maintainKeyState
+  , isHeld
+  , isPressed
+  , isUntouched
+  , isReleased
+  , isTouched
   ) where
 
 data KeyStatus
@@ -56,3 +61,18 @@ maintainKeyState delta KeyState{ksStatus, ksCounter} = case ksStatus of
   KeyStatus'Pressed -> KeyState KeyStatus'Held Nothing
   KeyStatus'Held -> KeyState KeyStatus'Held (Just $ delta + (case ksCounter of Nothing -> 0; Just counter -> counter))
   KeyStatus'Released -> KeyState KeyStatus'Untouched Nothing
+
+isHeld :: KeyState a -> Bool
+isHeld ks = ksStatus ks == KeyStatus'Held
+
+isPressed :: KeyState a -> Bool
+isPressed ks = ksStatus ks == KeyStatus'Pressed
+
+isUntouched :: KeyState a -> Bool
+isUntouched ks = ksStatus ks == KeyStatus'Untouched
+
+isReleased :: KeyState a -> Bool
+isReleased ks = ksStatus ks == KeyStatus'Released
+
+isTouched :: KeyState a -> Bool
+isTouched ks = isPressed ks || isHeld ks
